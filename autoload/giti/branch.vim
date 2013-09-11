@@ -20,19 +20,6 @@ function! giti#branch#list_all()"{{{
 \ )
 endfunction"}}}
 
-function! giti#branch#recent()"{{{
-  let branch_list = split(
-\   giti#system('for-each-ref --sort=-committerdate --format="%(refname:short),%(committerdate:relative),%(objectname:short),%(contents:subject)" refs/heads/'),
-\ '\n')
-
-  return s:build_formatted_branch_data(branch_list)
-endfunction"}}}
-
-function! giti#branch#current_name()"{{{
-  let current_branch = giti#branch#current()
-  return has_key(current_branch, 'name') ? current_branch['name'] : 'master'
-endfunction"}}}
-
 function! giti#branch#current()"{{{
   let branches = filter(
 \   map(
@@ -89,39 +76,6 @@ function! s:build_branch_data(line)"{{{
 \   'name'       : s:pickup_branch_name(a:line),
 \   'is_current' : s:is_current(a:line),
 \   'is_remote'  : s:is_remote(a:line),
-\ }
-endfunction"}}}
-
-function! s:build_formatted_branch_data(branch_list)"{{{
-  let branch_data = map(
-\   a:branch_list,
-\   's:build_branch_data_from_formatted_line(v:val)'
-\ )
-  let name_width = 0
-  for branch in branch_data
-    if strlen(branch.name) > name_width
-      let name_width = strlen(branch.name)
-    endif
-  endfor
-
-  let name_width = name_width + 1
-  let name_format = '%-' . name_width . 's'
-  return map(
-\   branch_data, '{
-\    "name" : printf(name_format, v:val.name),
-\    "relativedate" : v:val.relativedate,
-\    "objectname"   : v:val.objectname,
-\    "message"      : v:val.message,
-\ }')
-endfunction"}}}
-
-function! s:build_branch_data_from_formatted_line(line)"{{{
-  let splitted = split(a:line, ",")
-  return {
-\   'name'         : splitted[0],
-\   'relativedate' : splitted[1],
-\   'objectname'   : splitted[2],
-\   'message'      : join(splitted[3:], ","),
 \ }
 endfunction"}}}
 
