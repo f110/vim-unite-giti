@@ -13,7 +13,14 @@ endfunction"}}}
 let s:source = {
 \ 'name' : 'giti/branch_recent',
 \ 'description' : 'display recent changed branches',
+\ 'syntax' : 'uniteSource__giti_branch_recent',
+\ 'hooks' : {},
 \}
+
+function! s:source.hooks.on_syntax(args, cocntext)
+    syntax match uniteSource__giti_branch_recent_branch_name /\S\+\s\+(\w\+)/ contained containedin=uniteSource__giti_branch_recent
+    highlight link uniteSource__giti_branch_recent_branch_name Statement
+endfunction
 
 function! s:source.gather_candidates(args, context)"{{{
   call unite#print_message('[giti/branch_recent]')
